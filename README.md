@@ -17,3 +17,6 @@ CPUTimeUsed: Int
 state: Varchar (Finished or Failed)
 
 tablesAnalyzed: Array(Varchar)
+
+# Relationship
+![alt text](image.png)
