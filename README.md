@@ -53,10 +53,11 @@ python runExampleQueries.py
 
 ### Other assumptions
 
-- Users are mapped to teams through the `User` table. Each user belongs to one team.
+- Users are mapped to teams through the `User` table. Each user belongs to one team at a time. In reality this list would come from the company's HR or employee directory, refreshed daily, and is joined to `Query` to sum resources per team.
 - A query that reads several tables counts as one use of each of those tables. Resources are counted once per query (from `Query`), so they are never counted twice.
 - Failed queries are kept because they still use resources
 - Duplicates are possible, the newest event per `queryId` wins
+- Team history: users can change teams. `User` keeps one row per period in a team (`validFrom` inclusive, `validTo` exclusive, `9999-12-31` = still valid), so each query is counted for the team the user belonged to on the day of the query. In the fake data Anna moves from Team A to Team B on 2023-01-05.
 
 ---
 
@@ -68,7 +69,7 @@ python runExampleQueries.py
 |---|---|
 | `RawData` | one raw event, exactly as it arrives (can contain duplicates) |
 | `Team` | one team |
-| `User` | one user and the team they belong to |
+| `User` | one period of a user in one team |
 | `Query` | one query with its resource usage |
 | `QueryTable` | one table read by one query |
 
@@ -111,14 +112,12 @@ Starts from `Query` (one row per query, so nothing is counted twice), joins `Use
 
 | teamName | total_queries | failed_queries | total_cpu_time_minutes | total_GB_scanned |
 |---|---|---|---|---|
-| Team A | 24 | 4 | 115.83 | 759.2 |
+| Team A | 23 | 4 | 106.16 | 741.36 |
 
 *Both examples use the period 2023-01-01 – 2023-01-10.*
 
 ---
 
 ## Limitations and next steps
-
-- Team history: if a user changes team, all their old queries move to the new team. Adding `validFrom` / `validTo` to `User` would fix this.
 - Users missing from `User` (e.g. service accounts) are dropped by the join. They could go to an "Unmapped" team instead.
 - Cost per table: splitting the CPU of a multi-table query between its tables would show which tables are the most expensive.

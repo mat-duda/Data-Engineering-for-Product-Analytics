@@ -16,7 +16,9 @@ CREATE TABLE IF NOT EXISTS Team (
 
 CREATE TABLE IF NOT EXISTS User (
     userId          VARCHAR,
-    teamId          VARCHAR
+    teamId          VARCHAR,
+    validFrom       DATE,
+    validTo         DATE
 );
 
 CREATE TABLE IF NOT EXISTS Query (
