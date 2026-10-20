@@ -1,12 +1,11 @@
-DELETE FROM Query WHERE queryDate = $run_date;
+DELETE FROM Query WHERE queryDate = $runDate;
 
 INSERT INTO Query 
 SELECT
  queryId,
  userId, 
-CAST(whenReceived AS DATE) AS queryDate,
+CAST(whenQueried AS DATE) AS queryDate,
  whenQueried, 
- whenReceived,
  cpuTimeMs,
  bytesScanned, 
  state
@@ -14,6 +13,6 @@ FROM (
     SELECT *,
     ROW_NUMBER() OVER (PARTITION BY queryId ORDER BY whenReceived DESC) AS rn
     FROM RawData
-    WHERE CAST(whenReceived AS DATE) = $run_date
+    WHERE CAST(whenQueried AS DATE) = $runDate
 )
 WHERE rn = 1;

@@ -1,9 +1,9 @@
-DELETE FROM QueryTables WHERE queryDate = $runDate;
+DELETE FROM QueryTable WHERE queryDate = $runDate;
 
-INSERT INTO QueryTables
+INSERT INTO QueryTable
 SELECT DISTINCT
     queryId,
     UNNEST(tablesAnalyzed) AS tableName,
-    CAST(endTime AS DATE)  AS queryDate
+    CAST(whenQueried AS DATE)  AS queryDate
 FROM RawData
-WHERE CAST(endTime AS DATE) = $runDate;
+WHERE CAST(whenQueried AS DATE) = $runDate;

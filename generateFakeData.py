@@ -22,7 +22,8 @@ for i in range(200):
         when_queried,
         when_received,
         random.choice(users)[0],
-        random.randint(100, 600_000),               
+        random.randint(100, 600_000),
+        random.randint(1_000_000, 50_000_000_000),
         random.choice(["FINISHED"] * 9 + ["FAILED"]),  
         random.sample(tables, k=random.randint(1, 3)), 
     ))
@@ -30,24 +31,16 @@ for i in range(200):
 queries.append(queries[0])
 
 connection = duckdb.connect(database='meta_dwh.duckdb')
+connection.execute(open("sql/createTables-1.sql").read())
 
-connection.execute("CREATE OR REPLACE TABLE Team (teamId VARCHAR, teamName VARCHAR)")
-connection.execute("CREATE OR REPLACE TABLE User (userId VARCHAR, teamId VARCHAR)")
-connection.execute("""
-    CREATE OR REPLACE TABLE Query (
-        queryId        VARCHAR,
-        whenQueried    TIMESTAMP,
-        whenReceived   TIMESTAMP,
-        userId         VARCHAR,
-        cpuTimeMs      BIGINT,
-        state          VARCHAR,
-        tablesAnalyzed VARCHAR[]
-    )
-""")
+
+connection.execute("DELETE FROM RawData")
+connection.execute("DELETE FROM Team")
+connection.execute("DELETE FROM User")
 
 connection.executemany("INSERT INTO Team VALUES (?, ?)", teams)
 connection.executemany("INSERT INTO User VALUES (?, ?)", users)
-connection.executemany("INSERT INTO Query VALUES (?, ?, ?, ?, ?, ?, ?)", queries)
+connection.executemany("INSERT INTO RawData VALUES (?, ?, ?, ?, ?, ?, ?, ?)", queries)
 
-connection.sql("SELECT * FROM Query LIMIT 5").show()
+connection.sql("SELECT * FROM RawData LIMIT 5").show()
 connection.close()
