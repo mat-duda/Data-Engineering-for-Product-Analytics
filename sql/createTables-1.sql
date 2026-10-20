@@ -1,39 +1,36 @@
-Create TABLE if not exist RawData (
+CREATE TABLE IF NOT EXISTS RawData (
     queryId         VARCHAR,
+    whenQueried     TIMESTAMP,
+    whenReceived    TIMESTAMP,
     userId          VARCHAR,
-    startTime       TIMESTAMP,
-    endTime         TIMESTAMP,
-    receivedAt      TIMESTAMP,
-    state           VARCHAR,
     cpuTimeMs       BIGINT,
-    tablesAnalyzed  VARCHAR[] 
+    bytesScanned    BIGINT,
+    state           VARCHAR,
+    tablesAnalyzed  VARCHAR[]
 );
 
-
-
-Create table if not exist Team(
+CREATE TABLE IF NOT EXISTS Team (
     teamId          VARCHAR,
-    teamName        VARCHAR,
+    teamName        VARCHAR
 );
 
-Create table if not exist User(
+CREATE TABLE IF NOT EXISTS User (
     userId          VARCHAR,
-    teamName        VARCHAR,
+    teamId          VARCHAR
 );
 
-Create table if not exist Query(
+CREATE TABLE IF NOT EXISTS Query (
     queryId         VARCHAR,
     userId          VARCHAR,
-    startTime       TIMESTAMP,
-    endTime         TIMESTAMP,
-    receivedAt      TIMESTAMP,
-    state           VARCHAR,
+    queryDate       DATE,
+    whenQueried     TIMESTAMP,
     cpuTimeMs       BIGINT,
-    tablesAnalyzed  VARCHAR[] 
+    bytesScanned    BIGINT,
+    state           VARCHAR
 );
 
-Create table if not exist QueryTable(
+CREATE TABLE IF NOT EXISTS QueryTable (
     queryId         VARCHAR,
     tableName       VARCHAR,
+    queryDate       DATE
 );
-
