@@ -58,6 +58,7 @@ python runExampleQueries.py
 - Failed queries are kept because they still use resources
 - Duplicates are possible, the newest event per `queryId` wins
 - Team history: users can change teams. `User` keeps one row per period in a team (`validFrom` inclusive, `validTo` exclusive, `9999-12-31` = still valid), so each query is counted for the team the user belonged to on the day of the query. In the fake data Anna moves from Team A to Team B on 2023-01-05.
+- Users that do not belong to any team are map to teamed called `UNASSIGNED`, so their queries are not hidden
 
 ---
 
@@ -119,5 +120,4 @@ Starts from `Query` (one row per query, so nothing is counted twice), joins `Use
 ---
 
 ## Limitations and next steps
-- Users missing from `User` (e.g. service accounts) are dropped by the join. They could go to an "Unmapped" team instead.
 - Cost per table: splitting the CPU of a multi-table query between its tables would show which tables are the most expensive.

@@ -6,9 +6,19 @@ random.seed(42)
 
 forever = date(9999, 12, 31)
 
-teams = [('TA', 'Team A'), ('TB', 'Team B'), ('TC', 'Team C')]
+teams = [('TA', 'Team A'), 
+         ('TB', 'Team B'), 
+         ('TC', 'Team C'),
+         ('UNASSIGNED', 'UNASSIGNED')
+         ]
 
-users = [('Anna', 'TA',date(2023, 1, 1), date(2023, 1, 5)),('Anna', 'TB',date(2023, 1, 5), forever), ('Bob', 'TB',date(2023, 1, 1), forever), ('Charlie', 'TC',date(2023, 1, 1), forever), ('David', 'TA',date(2023, 1, 1), forever), ('Eva', 'TB',date(2023, 1, 1), forever)]
+users = [('Anna', 'TA',date(2023, 1, 1), date(2023, 1, 5)),
+         ('Anna', 'TB',date(2023, 1, 5), forever), 
+         ('Bob', 'TB',date(2023, 1, 1), forever), 
+         ('Charlie', 'TC',date(2023, 1, 1), forever),
+           ('David', 'TA',date(2023, 1, 1), forever), 
+           ('Eva', 'TB',date(2023, 1, 1), forever)
+           ]
 
 tables = ['orders', 'products', 'customers']
 
@@ -33,6 +43,17 @@ for i in range(200):
     ))
 
 queries.append(queries[0])
+
+queries.append((
+    "q9999",
+    datetime(2023, 1, 5, 3, 0),
+    datetime(2023, 1, 5, 3, 1),
+    'Unknown',
+    120_000,
+    10_000_000_000,
+    "FINISHED",
+    ['orders'],
+))
 
 connection = duckdb.connect(database='meta_dwh.duckdb')
 connection.execute(open("sql/createTables-1.sql").read())
