@@ -1,4 +1,7 @@
+import sys
+
 import duckdb
+
 con = duckdb.connect("meta_dwh.duckdb")
 sql = open("sql/5-testQueries.sql").read()
 
@@ -15,4 +18,6 @@ for statement in sql.split(";"):
         print(f"OK    {name}")
 
 con.close()
+
 print(f"Total failed: {failed}")
+sys.exit(1 if failed else 0)
