@@ -19,7 +19,7 @@ def run_day(con, runDate):
 
 
 def main():
-    # usage: python 2-runPipeline.py 2026-10-01 2026-10-03
+    # usage: python 2-runPipeline.py 2023-01-01 2023-01-31
     start = date.fromisoformat(sys.argv[1])
     end = date.fromisoformat(sys.argv[2]) if len(sys.argv) > 2 else start
 

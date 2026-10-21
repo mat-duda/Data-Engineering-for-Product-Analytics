@@ -62,6 +62,8 @@ connection.execute(open("sql/1-createTables.sql").read())
 connection.execute("DELETE FROM RawData")
 connection.execute("DELETE FROM Team")
 connection.execute("DELETE FROM User")
+connection.execute("DELETE FROM Query")
+connection.execute("DELETE FROM QueryTable")
 
 connection.executemany("INSERT INTO Team VALUES (?, ? )", teams)
 connection.executemany("INSERT INTO User VALUES (?, ?,?,?)", users)

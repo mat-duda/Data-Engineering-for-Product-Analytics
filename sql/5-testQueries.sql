@@ -1,2 +1,6 @@
 --No duplicates check
-SELECT queryId FROM QueryTable  GROUP BY queryId HAVING COUNT(*) > 1; 
+SELECT queryId FROM Query GROUP BY queryId HAVING COUNT(*) > 1; 
+
+--No negative values check
+SELECT queryId FROM Query WHERE cpuTimeMs < 0 OR bytesScanned < 0;
+

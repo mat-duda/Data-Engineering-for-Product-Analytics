@@ -6,7 +6,7 @@ failed = 0
 for statement in sql.split(";"):
     if not statement.strip():
         continue
-    name = statement.strip().splitlines()[0].lstrip("- ")
+    name = statement.strip().splitlines()[0].lstrip("-")
     rows = con.execute(statement).fetchall()
     if rows:
         failed += 1
