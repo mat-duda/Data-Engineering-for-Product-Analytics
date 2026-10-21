@@ -56,7 +56,7 @@ queries.append((
 ))
 
 connection = duckdb.connect(database='meta_dwh.duckdb')
-connection.execute(open("sql/createTables-1.sql").read())
+connection.execute(open("sql/1-createTables.sql").read())
 
 
 connection.execute("DELETE FROM RawData")

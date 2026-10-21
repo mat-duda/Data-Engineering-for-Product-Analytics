@@ -1,7 +1,7 @@
 import duckdb
 
 con = duckdb.connect("meta_dwh.duckdb")
-sql = open("sql/exampleQueries.sql").read()
+sql = open("sql/4-exampleQueries.sql").read()
 
 for statement in sql.split(";"):
     if statement.strip():

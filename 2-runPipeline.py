@@ -13,13 +13,13 @@ def run_sql_file(con, path, runDate):
 
 
 def run_day(con, runDate):
-    run_sql_file(con, "sql/loadData-2.sql", runDate)
-    run_sql_file(con, "sql/loadQueryTable-3.sql", runDate)
+    run_sql_file(con, "sql/2-loadData.sql", runDate)
+    run_sql_file(con, "sql/3-loadQueryTable.sql", runDate)
     print(f"Loaded {runDate}")
 
 
 def main():
-    # usage: python run_pipeline.py 2026-10-01 2026-10-03
+    # usage: python 2-runPipeline.py 2026-10-01 2026-10-03
     start = date.fromisoformat(sys.argv[1])
     end = date.fromisoformat(sys.argv[2]) if len(sys.argv) > 2 else start
 
