@@ -6,7 +6,7 @@
 
 ## How to run
 
-Create and activate a virtual environment, then install DuckDB:
+Create and activate a virtual environment, then install the dependencies from `requirements.txt` (DuckDB):
 
 ```bash
 py -3.12 -m venv .venv
@@ -17,21 +17,25 @@ py -3.12 -m venv .venv
 ```
 
 ```bash
-python -m pip install duckdb
+python -m pip install -r requirements.txt
 ```
 
-Generate fake raw data, load it day by day and run the example queries:
+Generate fake raw data, load it day by day, run the data checks and the example queries:
 
 ```bash
-python generateFakeData.py
-```
-
-```bash
-python runPipeline.py 2023-01-01 2023-01-31
+python 1-generateFakeData.py
 ```
 
 ```bash
-python runExampleQueries.py
+python 2-runPipeline.py 2023-01-01 2023-01-31
+```
+
+```bash
+python 4-runTests.py
+```
+
+```bash
+python 3-runExampleQueries.py
 ```
 
 ---
@@ -58,7 +62,7 @@ python runExampleQueries.py
 - Failed queries are kept because they still use resources
 - Duplicates are possible, the newest event per `queryId` wins
 - Team history: users can change teams. `User` keeps one row per period in a team (`validFrom` inclusive, `validTo` exclusive, `9999-12-31` = still valid), so each query is counted for the team the user belonged to on the day of the query. In the fake data Anna moves from Team A to Team B on 2023-01-05.
-- Users that do not belong to any team are map to teamed called `UNASSIGNED`, so their queries are not hidden
+- Users that do not belong to any team (e.g. service accounts) are mapped to a team called `UNASSIGNED`, so their queries are not hidden. In the fake data this is the user `Unknown`.
 
 ---
 
@@ -91,21 +95,30 @@ With real Trino data I would also add peak memory and wall time.
 
 ## How data is updated
 
-The pipeline runs once per day and loads only that day. If a day is run again, its rows are deleted first and then loaded again, so there are never duplicates. Passing a date range (e.g. `runPipeline.py 2023-01-01 2023-01-31`) reloads older days as well (backfill).
+The pipeline runs once per day and loads only that day. If a day is run again, its rows are deleted first and then loaded again, so there are never duplicates. Passing a date range (e.g. `2-runPipeline.py 2023-01-01 2023-01-31`) reloads older days as well (backfill).
+
+---
+
+## Data checks
+
+`4-runTests.py` runs the checks from [`sql/5-testQueries.sql`](sql/5-testQueries.sql) after loading. Each check is a query that must return no rows:
+
+- no duplicate `queryId` in `Query`
+- no negative resource values
 
 ---
 
 ## Example queries
 
-The queries are in [`sql/exampleQueries.sql`](sql/exampleQueries.sql).
+The queries are in [`sql/4-exampleQueries.sql`](sql/4-exampleQueries.sql).
 
 ### How many distinct users queried the table X during a given period?
 
-Finds every query that read `orders` in `QueryTable`, joins `Query` to see who ran it and counts each user once.
+Finds every query that read `orders` in `QueryTable`, joins `Query` to see who ran it and counts each user once. All 5 named users and the unassigned user `Unknown` read `orders` in this period.
 
 | distinct_users |
 |---|
-| 5 |
+| 6 |
 
 ### How many resources did the team Y consume during that period?
 
@@ -116,6 +129,25 @@ Starts from `Query` (one row per query, so nothing is counted twice), joins `Use
 | Team A | 23 | 4 | 106.16 | 741.36 |
 
 *Both examples use the period 2023-01-01 – 2023-01-10.*
+
+### Additional queries
+
+**Top 5 most used tables** in the same period:
+
+| tableName | query_count |
+|---|---|
+| orders | 43 |
+| products | 38 |
+| customers | 38 |
+
+**Failure rate per team** for the whole month. The `UNASSIGNED` row shows that queries from users without a team are not lost:
+
+| teamName | total_queries | failure_rate_percent |
+|---|---|---|
+| Team A | 52 | 15.4 |
+| Team B | 101 | 13.9 |
+| Team C | 47 | 4.3 |
+| UNASSIGNED | 1 | 0.0 |
 
 ---
 
